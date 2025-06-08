@@ -96,23 +96,27 @@ export class GUI extends Panel {
         super(document.body, {
             // Top left position.
             position: 'absolute',
-            top: '10px',          // Distance from the top to the nearest ancestor.
-            left: '10px',         // Distance from the right of the nearest positioned ancestor
-            zIndex: '1000',       // Ensure element is on top.
+            top: '10px',
+            left: '10px',
+            zIndex: '1000',
 
             // Dimensions.
-            width: '300px',
+            width: '320px',
             maxHeight: '90vh',
 
             // Inner style.
-            padding: '10px',
-            backgroundColor: 'rgba(0, 0, 0, .7)',
+            padding: '20px',
+            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            backdropFilter: 'blur(10px)',
+            border: '1px solid rgba(255, 255, 255, 0.2)',
+            borderRadius: '15px',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
             color: '#fff',
-            fontFamily: 'sans-serif',
+            fontFamily: '"Segoe UI", Tahoma, Geneva, Verdana, sans-serif',
             fontSize: '14px',
 
             // Behavior.
-            overflowY: 'auto', // Adds a scrollbar if content overflows vertically.
+            overflowY: 'auto',
         });
     }
 }
@@ -138,13 +142,24 @@ class Folder extends Panel {
         super(parent, {marginLeft: '10px'});
 
         this.#details = spawn('details', parent, {
-            border: '1px solid #888',
-            marginBottom: '5px',
-            padding: '5px',
+            background: 'linear-gradient(135deg, #ff6b6b 0%, #feca57 100%)',
+            border: '1px solid rgba(255, 255, 255, 0.3)',
+            borderRadius: '10px',
+            marginBottom: '10px',
+            padding: '10px',
+            boxShadow: '0 4px 15px rgba(0, 0, 0, 0.2)',
+            transition: 'all 0.3s ease',
         });
         this.#details.open = true;
 
-        spawn('summary', this.#details, {cursor: 'pointer'}).textContent = title;
+        spawn('summary', this.#details, {
+            cursor: 'pointer',
+            fontWeight: 'bold',
+            fontSize: '16px',
+            color: '#fff',
+            textShadow: '0 2px 4px rgba(0, 0, 0, 0.3)',
+            padding: '5px 0',
+        }).textContent = title;
         this.title = title;
         this.#details.appendChild(this._elt); // Doesn't display properly without this.
     }
@@ -164,15 +179,24 @@ class Param {
         this.box = spawn('div', parent, {
             display: 'flex',
             alignItems: 'center',
-            marginBottom: '4px',
+            marginBottom: '8px',
+            padding: '8px',
+            background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%)',
+            borderRadius: '8px',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            transition: 'all 0.3s ease',
         });
         this.label = spawn('label', this.box, {
             flex: '1',
-            marginRight: '6px',
+            marginRight: '10px',
+            fontWeight: '500',
+            color: '#fff',
+            textShadow: '0 1px 2px rgba(0, 0, 0, 0.3)',
         });
-        this.valueContainer = spawn('div', this.box, { // Aligns inputs.
-            width: '120px',
+        this.valueContainer = spawn('div', this.box, {
+            width: '130px',
             display: 'flex',
+            alignItems: 'center',
         });
         this.input = spawn(this.tag(), this.valueContainer);
     }
@@ -238,7 +262,13 @@ class InputParam extends Param {
 
 class Boolean extends InputParam {
     setup(initial) {
-        this.input.css({width: 'auto'});
+        this.input.css({
+            width: '20px',
+            height: '20px',
+            accentColor: '#ff6b6b',
+            cursor: 'pointer',
+            transform: 'scale(1.2)',
+        });
         this.setInput({type: 'checkbox', checked: initial});
     }
     value() { return this.input.checked; }
@@ -248,11 +278,13 @@ class Range extends InputParam {
     setup(initial, min, max, step) {
         this.input.css({
             width: '100%',
-            height: '20px',
+            height: '6px',
             appearance: 'none',
-            background: '#333',
+            background: 'linear-gradient(90deg, #ff6b6b 0%, #feca57 50%, #48dbfb 100%)',
+            borderRadius: '3px',
             outline: 'none',
-            cursor: 'pointer'
+            cursor: 'pointer',
+            transition: 'all 0.3s ease',
         });
         this.setInput({
             type: 'range',
@@ -262,27 +294,49 @@ class Range extends InputParam {
             value: initial,
         })
         this.valueSpan = spawn('span', this.valueContainer, {
-            width: '40px',
-            marginLeft: '5px',
+            width: '45px',
+            marginLeft: '8px',
+            padding: '2px 6px',
+            background: 'linear-gradient(135deg, #ff9ff3 0%, #54a0ff 100%)',
+            borderRadius: '12px',
+            fontSize: '12px',
+            fontWeight: 'bold',
+            textAlign: 'center',
+            color: '#fff',
+            textShadow: '0 1px 2px rgba(0, 0, 0, 0.3)',
         });
-        
-        // Style the slider thumb as a vertical bar
+
+        // Style the slider thumb
         const style = spawn('style', document.head);
         style.textContent = `
             input[type="range"]::-webkit-slider-thumb {
                 appearance: none;
-                width: 4px;
-                height: 20px;
-                background: #fff;
+                width: 18px;
+                height: 18px;
+                background: linear-gradient(135deg, #ff6b6b 0%, #feca57 100%);
+                border-radius: 50%;
                 cursor: pointer;
+                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+                transition: all 0.3s ease;
+            }
+            input[type="range"]::-webkit-slider-thumb:hover {
+                transform: scale(1.2);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
             }
             input[type="range"]::-moz-range-thumb {
-                width: 4px;
-                height: 20px;
-                background: #fff;
+                appearance: none;
+                width: 18px;
+                height: 18px;
+                background: linear-gradient(135deg, #ff6b6b 0%, #feca57 100%);
+                border-radius: 50%;
                 cursor: pointer;
                 border: none;
-                border-radius: 0;
+                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+                transition: all 0.3s ease;
+            }
+            input[type="range"]::-moz-range-thumb:hover {
+                transform: scale(1.2);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
             }
         `;
     }
@@ -293,11 +347,23 @@ class Range extends InputParam {
 
 class Select extends InputParam {
     setup(initial, options) {
-        this.input.css({width: '100%'});
+        this.input.css({
+            width: '100%',
+            padding: '6px 10px',
+            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            border: '1px solid rgba(255, 255, 255, 0.3)',
+            borderRadius: '6px',
+            color: '#fff',
+            fontSize: '13px',
+            cursor: 'pointer',
+            outline: 'none',
+        });
         for (const [key, value] of Object.entries(options)) {
             const option = spawn('option', this.input);
             option.text = key;
             option.value = JSON.stringify(value);
+            option.style.background = '#764ba2';
+            option.style.color = '#fff';
             if (value === initial) option.selected = true;
         }
     }
@@ -308,8 +374,28 @@ class Select extends InputParam {
 
 class Number extends InputParam {
     setup(initial) {
-        this.input.css({width: '100%'});
+        this.input.css({
+            width: '100%',
+            padding: '6px 10px',
+            background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%)',
+            border: '1px solid rgba(255, 255, 255, 0.3)',
+            borderRadius: '6px',
+            color: '#fff',
+            fontSize: '13px',
+            outline: 'none',
+            transition: 'all 0.3s ease',
+        });
         this.setInput({type: 'number', value: initial});
+        
+        // Add focus effects
+        this.input.addEventListener('focus', () => {
+            this.input.style.borderColor = '#ff6b6b';
+            this.input.style.boxShadow = '0 0 10px rgba(255, 107, 107, 0.5)';
+        });
+        this.input.addEventListener('blur', () => {
+            this.input.style.borderColor = 'rgba(255, 255, 255, 0.3)';
+            this.input.style.boxShadow = 'none';
+        });
     }
     value() { return parseFloat(this.input.value); }
 }
@@ -324,5 +410,13 @@ class ReadOnly extends Param {
 
     update(content) {
         this.input.textContent = content;
+        this.input.css({
+            padding: '6px 10px',
+            background: 'linear-gradient(135deg, #54a0ff 0%, #5f27cd 100%)',
+            borderRadius: '6px',
+            color: '#fff',
+            fontWeight: '500',
+            textShadow: '0 1px 2px rgba(0, 0, 0, 0.3)',
+        });
     }
 }
